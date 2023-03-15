@@ -1,16 +1,16 @@
 ## Firewall 🔥
 - is both hardware and software
 - listen to **network layer** (or other layer too)
-- firewall - สามารถมอง "network data" ที่ส่งผ่านกันใน network ได้ทั้งใน physical, data link, network, application 
+- firewall - สามารถมอง "network data" ที่ส่งผ่านกันใน network ได้ทั้งใน physical, data link, network, application
 	- prevent: เป็นการ prevent สิ่งที่รู้ว่าผิดปกติ
-	- detect 
+	- detect
 	- reponses: drop packet 📦
 #### Q: what are the important header fields during a network transmission
 - A: in data link layer protocol is IEEE 802.3 -> MAC address (src, dest)
 - network layer: IP address (src, dest), ID, offset, fragment flag (when MTU between 2 side is different) and ICMP: type, code
 - transport layer: TCP, UDP -> port (src, dest), seq#, ack#, window size, flag (tcp state machine)
 #### Q: what are the attacks, invades of the network ⚔
- - แต่ละการโจมตีมันเกี่ยวข้องกับ header field ใดบ้าง มีลักษณะเป็นอย่างไร 
+ - แต่ละการโจมตีมันเกี่ยวข้องกับ header field ใดบ้าง มีลักษณะเป็นอย่างไร
 - DoS:
 	- SYN Flood: ส่ง packet ปริมาณมากที่มีการตั้ง SYN flag
 	- Land Attack: ส่ง ICMP ที่มี src ip = dest ip
@@ -63,7 +63,7 @@
 
 #### Q: what are the threats firewall can and can't prevent
 - network attack that has pattern. header shit
-- firewall can only prevent network attack from network layer, transport layer 
+- firewall can only prevent network attack from network layer, transport layer
 - can't interfere with content of application layer
 
 ![](https://media.discordapp.net/attachments/1014398974649708624/1080338767547748372/image.png)
