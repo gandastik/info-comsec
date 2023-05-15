@@ -280,6 +280,7 @@
 - has multiple interfaces (firewall switch based)
 - ทำได้ทั้ง L2 -> VLAN, L3 -> routing + filtering
 - **switch based**
+	- firmware
 	- from the switch industry
 	- pros
 		- fast
@@ -294,6 +295,8 @@
 	- can link with other systems (eg. authen)
 - 😵 wtf is a firewall bandwidth you may ask .... its a **amount of traffic after being filtered by a firewall per second ** 🤓
 - **host based firewall** - firewall at your device (3 layers needed: transports, network, data link)
+	- sits inbetween network layer and transport layer
+	- program or service that runs on the pc
 	- personal firewall
 
 #### Q: can firewall prevent viruses ?
@@ -303,7 +306,7 @@
 	- so if some shady shit do some shady thing to pass firewall then we're fucked so thats why antivirus comes in
 
 #### Q: what are the threats firewall can and can't prevent
-- network attack that has pattern. header shit
+- network attack that has pattern. header and shit
 - firewall can only prevent network attack from network layer, transport layer
 - can't interfere with content of application layer
 
@@ -318,11 +321,16 @@
 
 ### Types of Firewall
 - packet filtering
+	- มองดู header ของ packet (src ip, dest ip) on network layer
+	- basic and simple -> fast
+	- literally just a router feature
 - stateful inspection
+	- กำหนด state ใน policy ได้
 - application proxy
+	- "proxy"
 - next generation firewall
 	- integrated system
-	 - behavior-based
+	- behavior-based
 
 ### Firewal Policy
 - **allow all / deny some**
@@ -344,6 +352,8 @@
 	- TCP, UDP, ICMP, application level (FTP, HTTP, multimedia)
 - state
 - action (allow, deny)
+- use cases: block ragnarok
+	- สามารถกำหนดให้ block port เฉพาะของมัน แล้ว block หลังจาก state == connected ไป + เพิ่ม delay ได้อีกด้วย
 
 ### Application Proxy Policy
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085409543711883415/image.png?width=674&height=685)
@@ -351,6 +361,13 @@
 - application protocol (http, mail, dns, any)
 - application services (kazza, edonkey, facebook, google-talk)
 - action (allow, deny)
+- act as a "proxy"
+	- เชื่อมต่อกับ src. ให้เสร็จก่อน
+	- หลังจากนั้นสร้าง connection ไปยัง dest.
+	- กัน DoS attack ได้ (prevent ~70%)
+	- cons: dest. จะไม่รู้ว่าใคร connect มา
+- เช็ค application แล้วกำหนดได้ว่าให้ใช้ application อะไรที่กำหนดไว้ใน rule-set ได้
+- use-case: block bittorrent (detected by application firewall)
 
 ### Next Generation Firewall
 - classify all traffic, across all ports, all the time
@@ -360,12 +377,15 @@
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085410236996780032/image.png)
 - map between user and application column
 - profile column is an action responding to the policy
+- implement with authentication + role-based user => need identity management
 
 ### Activity
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085410811675168798/image.png)
 - threats             |  packet filtering   |  stateful inspection  |  application proxy | firewall NG |
 - port scans:      |            no              |                yes             |              yes            |        yes
 - virus (scripted):            no              |                no              |               no             |         no
+- DoS | no | yes | yes | yes
+- Bittorrent: no | no | yes | yes
 
 ### Assignment (?) 🤯
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085417504567988315/image.png?width=652&height=702)
@@ -391,6 +411,8 @@
 
 ### Firewall Zone 🔥
 - แยก Zone ของเครือข่ายตามความเสี่ยง หรือบทบาทแล้วนำ firewall กั้นระหว่างเครือข่าย เพื่อกำหนดกฏรักษาความปลอดภัย
+- recommend: ให้มีการแบ่ง 3 zone ตามนี้
+	- กำหนดให้ untrusted <-> DMZ <-> trust เป็น flow ที่ปลอดภัย
 - **Untrusted Zone**
 	- cann't control user
 	- anyone can use the network
@@ -409,14 +431,23 @@
 - need to deny all connection between **untrusted and trusted network** -> cons of multi-leg firewall
 - everything from **untrusted network** need to pass through **DMZ zone** before enter **internal trusted zone**
 
-#### Sandwich
+#### Sandwich (recommended)
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085425956770041977/image.png)
 - very secure -> basically like 2 doors
-
+- basically forces **untrusted zone** reach **DMZ** before reaching **trusted zone**
 
 #### Layered Firewall
 ![](https://media.discordapp.net/attachments/1014398974649708624/1085426467539787816/image.png?width=938&height=702)
+- aka multi-layered firewall
+- **high availability** and **high security**
+	- HA: firewalls need to be the same
 - "layered" -> layer of untrusted, 
+- **recommended**: firewall should be different provider/manufacturors
+	- bc if all fws are the same -> 1 bad vulnerability is all it takes 🃏
+
+#### Deployment
+- @Router
+- In-Line mode (best recommended)
 
 ## Network Security Tools
 
@@ -490,9 +521,13 @@
 
 ### เหตุฉุกเฉิน vs ภัยพิบัติ
 - เหตุฉุกเฉิน (incident) ทำให้บริการหยุดชะงักไปชั่วคราว หรือทำงานได้ช้าลง แต่ยังสามารถไปยังถึงเป้าหมายได้อยู่
+	- เสียหายวงจำกัด
+	- requirement in ISO27001
 - ภัยพิบัติ ทำให้ sw/hw/network/process/data/people ทุกอย่างสูญเสีย สูญหายไม่สามารถทำงานต่อได้
+	- eg. ภูเขาไฟ, ไฟไหม้, สึนามิ
 
 ### แผนรับมือเหตุฉุกเฉิน
+- incident response plan -> automatic, readiness
 - รายละเอียดของระบบงาน
 - บุคคลกร
 	- ตำแหน่ง: ความสามารถ
@@ -554,8 +589,8 @@
 ## Wireless LAN Security
 ### Wireless LAN model
 ![](https://media.discordapp.net/attachments/1014398974649708624/1098061696750321744/image.png)
-- เน้นไปที่  IEEE802.11 (Protocol for wireless network)
-- ทำงานอยู่บน Data link layer (2nd)
+- เน้นไปที่ **IEEE802.11** (Protocol for wireless network)
+- ทำงานอยู่บน Physical Layer && Data link layer (MAC)
 - **2 mode**
 	- **ad-hoc mode** : connect automatically (no need for switch)
 		 - 4 set of MAC address (to make it connect automatically)
@@ -569,6 +604,114 @@
 - 802.11a : freq = 5GHz
 - 802.11n : 2008, 72 - 600 Mb/s, 2.4or5GHz
 - 802.11ac : 2014, 433 - 6933 Mb/s, 5GHz
+
+#### Channel
+![](https://media.discordapp.net/attachments/1014398974649708624/1107719655965073490/image.png)
+- จากรุปเป็นของ 2.4GHz
+- AP ทำงานตาม channel ที่เลือกไว้
+	- ถ้าเกิดมี device ที่ใช้ channel เดียวกัน จะเกิดการกวนกัน
+	- ทำให้เกิดการใช้ข้าม 1->6->11
+ 
+#### Tools
+- wifi analyzer: check the health of wifi signal around the area
+- vistumbler
+
+#### Keywords
+- Wi-Fi: alliance of the network กลุ่มเจ้าของผลิตภัณฑ์คอยตรวจเช็ค -> wifi certificated
+- CSMA/CA: Carrier Senses Multiple Access (Collision Avoidance) 
+- MAC Filtering: data link layer (filter the mac ip -> allow or deny)
+
+### Basic Security of 802.11
+- Authentication -> WEP
+- Encryption -> WEP
+- Integrity -> WEP
+- Access Control -> Mac Filtering
+
+### Discovery
+#### Open Network
+- AP: regulary send **beacon signals**
+- devices received the info(SSID) -> send association req
+- AP *accepts* (check Mac Filtering - allow or deny) -> send association resp 
+- connected
+#### Close Network
+- AP: not sending **beacon signals**
+- node need to send **probe req**
+- AP check SSID -> send **probe resp**
+- sender association req - ap association resp
+- connected
+
+### User Authentication
+- Open System Authentication
+	- authentication ให้กับทุกคนที่ request
+	- ไม่มีรหัสผ่าน
+- shared-key authentication
+	- use key to authentication
+![](https://media.discordapp.net/attachments/1014398974649708624/1107724913399320747/image.png)
+- cons: MITM
+
+### WEP: Wire Equivalent Privacy (WEP)
+- 802.11b
+- confidentiality: 40bit encryption key
+	- RC4 algorithm
+- access control
+	- shared-key authentication + encryption
+- data integrity
+	- checksum every message
+![](https://media.discordapp.net/attachments/1014398974649708624/1107726126379450388/image.png)
+- vulnerability
+	- find 2 message that have the same 2 key id -> reverse to find key > we all doomed 💀
+- 802.11 need to evolve
+	- increase length of id (less chance to have same id)
+	- WiFi -> announce to use WPA (WiFi Protected Access) in 2003 
+	- in 2004 -> WPA2 IEEE 802.11i
+
+### WPA
+- fix vulnerabilty in WEP
+- update firmware from the old device of 802.11
+- user authentication
+- 2 mode:
+	- WPA enterprise: TKIP/MIC ; 802.1X/EAP
+	- WPA personal: TKIP/MIC ; PSK
+- Authentication ใช้ 802.1x/EAP
+	- ดูแลตั้งแต่ src ถึง access point
+- RADIUS protocols ในการทำ AAA -> key distributions
+	- passwords and digital certificates
+	- eg. TLS, TLLS: cerficates based methods or PEAP, LEAP: passwords based methods
+- encryption: TKIP
+	- encapsulate (based on) WEP
+	- use RC4-Engine like WEP
+	- protect spoofing
+	- pros: separate key of encryption in differnt packets
+		- longer keys
+![](https://media.discordapp.net/attachments/1014398974649708624/1107728186839670904/image.png)
+
+### WPA2
+- 802.11i
+- use AES encryption algorithms -> utilizing Hardware
+- enterprise mode -> 802.1X/EAP authenticaion, AES-CCMP for encryption
+- personal mode -> PSK for authentication, AES-CCMP for encryption
+- AES key 128bits
+- encryption loop 10 times
+- AES uses CCMP protocols
+![](https://media.discordapp.net/attachments/1014398974649708624/1107728863611584522/image.png)
+
+### Comparision of the standards
+![](https://media.discordapp.net/attachments/1014398974649708624/1107729028070264873/image.png)
+
+### Q: Wireless affects IT system?
+- wireless is exposes to public -> untrusted
+### Q: 802.11 is good enough for IT system?
+- yes
+- authenticaion and shits 
+### Q: 802.11 can not deal with what?
+- other layer, eg. sessions hijacking, application layer (virsus etc.)
+- only deal with physical layer, data link layer
+- make wireless network more like wire network (cannot just sniffs stuff out of thin air anymore)
+
+### Q: x devices what wireless security standards should be implemented 🥱 (probably on exams)
+- 1-10: 
+- 20-60: 
+- 200+: 
 
 ## IT Security Procedures
 
